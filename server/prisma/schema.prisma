@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgres://atulmorchhlay@localhost:5432/api_generator" //env("DATABASE_URL")
+}
+
+model user {
+  id              Int               @id @unique @default(autoincrement())
+  email           String            @unique
+  password        String
+  name            String
+  token           String?
+  secretKey       String            @default("")
+  isLogin         Boolean           @default(false)
+  freeRequests    Int               @default(50)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @default(now()) @updatedAt
+  otp             otp[]
+  api             api[]
+  order           order[]
+  data            data[]
+  project         project[]
+  payment_details payment_details[]
+  init_order      init_order[]
+}
+
+model otp {
+  id        Int      @id @unique @default(autoincrement())
+  code      String
+  user      user     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model project {
+  id        Int      @id @unique @default(autoincrement())
+  title     String
+  user      user     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  api       api[]
+
+  @@unique([title, userId])
+}
+
+model api {
+  id        Int         @id @unique @default(autoincrement())
+  title     String
+  user      user        @relation(fields: [userId], references: [id])
+  userId    Int
+  project   project     @relation(fields: [projectId], references: [id])
+  projectId Int
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @default(now()) @updatedAt
+  api_model api_model[]
+  data      data[]
+
+  @@unique([title, projectId])
+}
+
+model api_model {
+  id        Int      @id @unique @default(autoincrement())
+  api       api      @relation(fields: [apiId], references: [id])
+  apiId     Int      @unique
+  model     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model init_order {
+  id               Int          @id @unique @default(autoincrement())
+  orderId          String
+  amount           Int
+  user             user         @relation(fields: [userId], references: [id])
+  createdAt        DateTime     @default(now())
+  subscriptionType Subscription
+  updatedAt        DateTime     @default(now()) @updatedAt
+  userId           Int
+  order            order[]
+}
+
+model payment_details {
+  id          Int           @id @unique @default(autoincrement())
+  user        user          @relation(fields: [userId], references: [id])
+  status      PaymentStatus
+  amount      Int
+  reason      String?
+  step        String?
+  description String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now()) @updatedAt
+  userId      Int
+  order       order[]
+}
+
+model order {
+  id                Int             @id @unique @default(autoincrement())
+  user              user            @relation(fields: [userId], references: [id])
+  userId            Int
+  price             Int
+  type              Subscription
+  totalRequests     Int
+  order             init_order      @relation(fields: [init_orderId], references: [id])
+  paymentDetails    payment_details @relation(fields: [payment_detailsId], references: [id])
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @default(now()) @updatedAt
+  init_orderId      Int
+  payment_detailsId Int
+}
+
+model data {
+  id        Int      @id @unique @default(autoincrement())
+  data      Json
+  user      user     @relation(fields: [userId], references: [id])
+  userId    Int
+  api       api      @relation(fields: [apiId], references: [id])
+  apiId     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+enum Subscription {
+  standard
+  premium
+}
+
+enum PaymentStatus {
+  success
+  failure
+}
