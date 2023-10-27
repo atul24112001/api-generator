@@ -21,6 +21,7 @@ import Link from "next/link";
 import ActiveLink from "../helper/ActiveLink";
 import Loading from "../helper/Loading";
 import Model from "../helper/Model";
+import NotificationState from "@/recoil/notification/notificationAtom";
 
 const Routes = [
   {
@@ -52,6 +53,7 @@ function LayoutComponent({
 }: PropsWithChildren<Props>) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useRecoilState(NotificationState);
 
   const router = useRouter();
 
@@ -121,73 +123,106 @@ function LayoutComponent({
     );
   }, []);
 
-  return auth.isAuthenticated ? (
-    <div className="lg:flex p-4 gap-4 items-center h-screen">
-      {sidebarOpen ? (
-        <nav className="lg:hidden p-4 flex flex-col bg-background-secondary fixed top-0 left-0 right-0 md:right-1/2 bottom-0">
-          <div className=" flex justify-between items-center">
-            <Logo />
-            <IconsButton onClick={toggleSidebar}>
-              <X />
-            </IconsButton>
-          </div>
-          {navigation}
-        </nav>
-      ) : (
-        <nav className="lg:hidden p-4 flex justify-between items-center">
-          <div className="flex items-center gap-4 ">
-            <button onClick={toggleSidebar}>
-              <Menu />
-            </button>
-            <Logo />
-          </div>
-          <IconsButton onClick={() => {}}>
-            <User size={24} />
-          </IconsButton>
-        </nav>
-      )}
-
-      <nav className=" p-4 hidden lg:flex flex-col bg-background-secondary h-full rounded-md w-1/5">
-        <div className="flex justify-center">
-          <Logo />
-        </div>
-        {navigation}
-      </nav>
-
-      <main className="h-full flex-1 flex flex-col">
-        <div className="hidden bg-background-secondary rounded-md px-4 py-2 lg:flex justify-between items-center">
-          <h3 className="text-xl font-semibold">Home</h3>
-          <div className=" flex gap-2 items-center">
-            <div className="">
-              <div className="text-right text-md">{auth.user?.name}</div>
-              <div className="text-right text-sm text-text-secondary">
-                {auth.user?.email}
+  return (
+    <>
+      <div className=" ">
+        {notifications.notifications.map((noti, index) => {
+          let timeOut = setTimeout(() => {
+            setNotifications((prev) => {
+              const updatedData = JSON.parse(JSON.stringify(prev));
+              updatedData.notifications.splice(index, 1);
+              return updatedData;
+            });
+          }, 5000);
+          return (
+            <div
+              key={`${index + 10}`}
+              className={`fixed right-0 top-[${
+                5 * index
+              }rem] p-8 w-screen lg:w-1/4`}
+            >
+              <div
+                className={`rounded-md p-2 gap-3 flex justify-between ${
+                  noti.type == "error" ? "bg-red-500" : "bg-green-600"
+                }`}
+              >
+                <div>{noti.text}</div>
+                <X
+                  onClick={() => {
+                    clearTimeout(timeOut);
+                    setNotifications((prev) => {
+                      const updatedData = JSON.parse(JSON.stringify(prev));
+                      updatedData.notifications.splice(index, 1);
+                      return updatedData;
+                    });
+                  }}
+                  className="cursor-pointer"
+                  size={24}
+                />
               </div>
             </div>
-            <IconsButton onClick={() => {}}>
-              <User size={32} />
-            </IconsButton>
-          </div>
+          );
+        })}
+      </div>
+      {auth.isAuthenticated ? (
+        <div className="lg:flex p-4 gap-4 items-center h-screen">
+          {sidebarOpen ? (
+            <nav className="lg:hidden p-4 flex flex-col bg-background-secondary fixed top-0 left-0 right-0 md:right-1/2 bottom-0">
+              <div className=" flex justify-between items-center">
+                <Logo />
+                <IconsButton onClick={toggleSidebar}>
+                  <X />
+                </IconsButton>
+              </div>
+              {navigation}
+            </nav>
+          ) : (
+            <nav className="lg:hidden p-4 flex justify-between items-center">
+              <div className="flex items-center gap-4 ">
+                <button onClick={toggleSidebar}>
+                  <Menu />
+                </button>
+                <Logo />
+              </div>
+              <IconsButton onClick={() => {}}>
+                <User size={24} />
+              </IconsButton>
+            </nav>
+          )}
+
+          <nav className=" p-4 hidden lg:flex flex-col bg-background-secondary h-full rounded-md w-1/5">
+            <div className="flex justify-center">
+              <Logo />
+            </div>
+            {navigation}
+          </nav>
+
+          <main className="h-full flex-1 flex flex-col">
+            <div className="hidden bg-background-secondary rounded-md px-4 py-2 lg:flex justify-between items-center">
+              <h3 className="text-xl font-semibold">Home</h3>
+              <div className=" flex gap-2 items-center">
+                <div className="">
+                  <div className="text-right text-md">{auth.user?.name}</div>
+                  <div className="text-right text-sm text-text-secondary">
+                    {auth.user?.email}
+                  </div>
+                </div>
+                <IconsButton onClick={() => {}}>
+                  <User size={32} />
+                </IconsButton>
+              </div>
+            </div>
+            <div className="overflow-auto px-4 py-2 flex-1">{children}</div>
+          </main>
         </div>
-        <div className="overflow-auto px-4 py-2 flex-1">{children}</div>
-      </main>
-      {/* <Model
-        open={!hasCookie}
-        footer={
-          <>
-            <Button onClick={logoutHandler}>Logout</Button>
-          </>
-        }
-        title="Session Expired!"
-        onCancel={() => {}}
-      ></Model> */}
-    </div>
-  ) : loading ? (
-    <div className="w-screen h-screen flex justify-center items-center">
-      <Loading />
-    </div>
-  ) : (
-    <div>{children}</div>
+      ) : loading ? (
+        <div className="w-screen h-screen flex justify-center items-center">
+          <Loading />
+        </div>
+      ) : (
+        <div>{children}</div>
+      )}
+    </>
   );
 }
 

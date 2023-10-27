@@ -9,6 +9,7 @@ import DataState from "@/recoil/data/dataAtom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import apiClient from "@/apiClient/apiClient";
 import Loading from "../helper/Loading";
+import NotificationState from "@/recoil/notification/notificationAtom";
 
 type Props = {};
 
@@ -17,6 +18,7 @@ function AccountDetails({}: Props) {
   const [copied, setCopied] = useState(false);
   const [data, setData] = useRecoilState(DataState);
   const [loading, setLoading] = useState(!data.currentPlane);
+  const setNotifications = useSetRecoilState(NotificationState);
 
   useEffect(() => {
     (async () => {
@@ -35,10 +37,22 @@ function AccountDetails({}: Props) {
               };
             });
           }
+
           setLoading(false);
-        } catch (error) {
+        } catch (error: any) {
           if (error instanceof Error) {
-            console.log(error.message);
+            setNotifications((prev) => {
+              return {
+                notifications: [
+                  ...prev.notifications,
+                  {
+                    text:
+                      error?.response?.data?.message ?? error?.message ?? "",
+                    type: "error",
+                  },
+                ],
+              };
+            });
           }
         }
       }

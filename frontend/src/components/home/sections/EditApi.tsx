@@ -5,11 +5,12 @@ import IconsButton from "@/components/helper/IconsButton";
 import Loading from "@/components/helper/Loading";
 import JsonEditor from "@/components/helper/jsonEditor/JsonEditor";
 import DataState from "@/recoil/data/dataAtom";
+import NotificationState from "@/recoil/notification/notificationAtom";
 import { useClipboard } from "@mantine/hooks";
 import { ArrowLeft, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 type Props = {
   model: any;
@@ -22,8 +23,7 @@ function EditApi({ model, setModel }: Props) {
   const [data, setData] = useRecoilState(DataState);
   const [loading, setLoading] = useState(true);
   const clipboard = useClipboard();
-
-  console.log(process.env.BASE_API_URL);
+  const setNotifications = useSetRecoilState(NotificationState);
 
   const endpoints = useMemo(() => {
     return [
@@ -64,7 +64,19 @@ function EditApi({ model, setModel }: Props) {
                 modelData.data[0];
               return updatedData;
             });
-          } catch (error) {
+          } catch (error: any) {
+            setNotifications((prev) => {
+              return {
+                notifications: [
+                  ...prev.notifications,
+                  {
+                    text:
+                      error?.response?.data?.message ?? error?.message ?? "",
+                    type: "error",
+                  },
+                ],
+              };
+            });
             console.log(error);
           }
           setLoading(false);

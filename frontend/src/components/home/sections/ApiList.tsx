@@ -2,9 +2,10 @@ import apiClient from "@/apiClient/apiClient";
 import IconsButton from "@/components/helper/IconsButton";
 import Loading from "@/components/helper/Loading";
 import DataState, { DataStateType } from "@/recoil/data/dataAtom";
+import NotificationState from "@/recoil/notification/notificationAtom";
 import { Edit, Trash } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 type Props = {
   setLoading: (state: boolean) => void;
@@ -13,6 +14,8 @@ type Props = {
 function ApiList({ setLoading }: Props) {
   const [data, setData] = useRecoilState(DataState);
   const [deletingAPi, setDeletingAPi] = useState<number | null>(null);
+
+  const setNotifications = useSetRecoilState(NotificationState);
 
   useEffect(() => {
     if (data.activeProject && !data.apis[data.activeProject.id]) {
@@ -27,7 +30,18 @@ function ApiList({ setLoading }: Props) {
             updatedData.apis[data.activeProject?.id ?? 0] = response.data;
             return updatedData;
           });
-        } catch (error) {
+        } catch (error: any) {
+          setNotifications((prev) => {
+            return {
+              notifications: [
+                ...prev.notifications,
+                {
+                  text: error?.response?.data?.message ?? error?.message ?? "",
+                  type: "error",
+                },
+              ],
+            };
+          });
           console.log(error);
         }
         setLoading(false);
@@ -41,7 +55,7 @@ function ApiList({ setLoading }: Props) {
     }
     setDeletingAPi(id);
     try {
-      await apiClient.delete(
+      const { data: response } = await apiClient.delete(
         `/api/api-generator/${data.activeProject?.id}/${id}`
       );
       setData((currentValue) => {
@@ -57,7 +71,30 @@ function ApiList({ setLoading }: Props) {
         };
         return updatedValue;
       });
-    } catch (error) {
+
+      setNotifications((prev) => {
+        return {
+          notifications: [
+            ...prev.notifications,
+            {
+              text: response.message,
+              type: "success",
+            },
+          ],
+        };
+      });
+    } catch (error: any) {
+      setNotifications((prev) => {
+        return {
+          notifications: [
+            ...prev.notifications,
+            {
+              text: error?.response?.data?.message ?? error?.message ?? "",
+              type: "error",
+            },
+          ],
+        };
+      });
       console.log(error);
     }
     setDeletingAPi(null);

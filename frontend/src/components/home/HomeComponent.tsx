@@ -5,13 +5,14 @@ import { ArrowLeft, Delete, Edit, Plus, Trash } from "lucide-react";
 import Model from "../helper/Model";
 import TextField from "../helper/TextField";
 import apiClient from "@/apiClient/apiClient";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import DataState, { DataStateType } from "@/recoil/data/dataAtom";
 import IconsButton from "../helper/IconsButton";
 import Loading from "../helper/Loading";
 import ApiList from "./sections/ApiList";
 import EditApi from "./sections/EditApi";
 import ProjectList from "./sections/ProjectList";
+import NotificationState from "@/recoil/notification/notificationAtom";
 
 type Props = {
   finalData: any;
@@ -27,6 +28,8 @@ function HomeComponent({ finalData }: Props) {
   const [model, setModel] = useState({});
   const [loading, setLoading] = useState(true);
 
+  const setNotifications = useSetRecoilState(NotificationState);
+
   const toggleCreateModel = () => {
     setOpenCreateModel((prev) => !prev);
   };
@@ -34,22 +37,36 @@ function HomeComponent({ finalData }: Props) {
   useEffect(() => {
     let projectData = finalData;
     (async () => {
-      if (!projectData) {
-        const { data } = await apiClient.get(
-          `${process.env.API_URL}/api/project`
-        );
-        projectData = data.data;
-      }
-      if (projectData) {
-        setData((currentValue) => {
-          const updatedValue: DataStateType = JSON.parse(
-            JSON.stringify(currentValue)
+      try {
+        if (!projectData) {
+          const { data } = await apiClient.get(
+            `${process.env.API_URL}/api/project`
           );
+          projectData = data.data;
+        }
+        if (projectData) {
+          setData((currentValue) => {
+            const updatedValue: DataStateType = JSON.parse(
+              JSON.stringify(currentValue)
+            );
 
-          updatedValue.projects = projectData;
-          return updatedValue;
+            updatedValue.projects = projectData;
+            return updatedValue;
+          });
+          setLoading(false);
+        }
+      } catch (error: any) {
+        setNotifications((prev) => {
+          return {
+            notifications: [
+              ...prev.notifications,
+              {
+                text: error?.response?.data?.message ?? error?.message ?? "",
+                type: "error",
+              },
+            ],
+          };
         });
-        setLoading(false);
       }
     })();
   }, [finalData]);
@@ -88,7 +105,18 @@ function HomeComponent({ finalData }: Props) {
           return updatedValue;
         });
         toggleCreateModel();
-      } catch (error) {
+      } catch (error: any) {
+        setNotifications((prev) => {
+          return {
+            notifications: [
+              ...prev.notifications,
+              {
+                text: error?.response?.data?.message ?? error?.message ?? "",
+                type: "error",
+              },
+            ],
+          };
+        });
         console.log(error);
       }
 
@@ -114,7 +142,18 @@ function HomeComponent({ finalData }: Props) {
         updatedData.apiModels[id] = response.data[0];
         return updatedData;
       });
-    } catch (error) {
+    } catch (error: any) {
+      setNotifications((prev) => {
+        return {
+          notifications: [
+            ...prev.notifications,
+            {
+              text: error?.response?.data?.message ?? error?.message ?? "",
+              type: "error",
+            },
+          ],
+        };
+      });
       console.log(error);
     }
     setUpdatingModel(false);

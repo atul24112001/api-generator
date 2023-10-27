@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import Button from "../helper/Button";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import DataState from "@/recoil/data/dataAtom";
 import useRazorpay from "react-razorpay";
 import AuthenticationState from "@/recoil/authentication/authAtom";
 import apiClient from "@/apiClient/apiClient";
 import Loading from "../helper/Loading";
 import { CheckCircle, XCircle } from "lucide-react";
+import NotificationState from "@/recoil/notification/notificationAtom";
 
 type Props = {};
 
@@ -20,6 +21,8 @@ function Plans({}: Props) {
   const [processingPayment, setProcessingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentError, setPaymentError] = useState(false);
+
+  const setNotifications = useSetRecoilState(NotificationState);
 
   const handlePayment = async (plan: {
     price: number;
@@ -92,7 +95,18 @@ function Plans({}: Props) {
         }
       });
       rzp1.open();
-    } catch (error) {
+    } catch (error: any) {
+      setNotifications((prev) => {
+        return {
+          notifications: [
+            ...prev.notifications,
+            {
+              text: error?.response?.data?.message ?? error?.message ?? "",
+              type: "error",
+            },
+          ],
+        };
+      });
       console.log(error);
     }
     setProcessingPayment(false);

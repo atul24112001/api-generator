@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 import apiClient from "@/apiClient/apiClient";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import AuthenticationState from "@/recoil/authentication/authAtom";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
+import NotificationState from "@/recoil/notification/notificationAtom";
 
 export enum AuthType {
   login,
@@ -28,29 +29,43 @@ function Authentication({ target }: Props) {
   const [auth, setAuth] = useRecoilState(AuthenticationState);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const setNotifications = useSetRecoilState(NotificationState);
 
   const onSubmit = async (credentials: AuthData) => {
     setLoading(true);
 
-    const { data, statusText } = await apiClient.post(
-      `/api/authentication/${target}`,
+    try {
+      const { data, statusText } = await apiClient.post(
+        `/api/authentication/${target}`,
+        credentials
+      );
 
-      credentials
-    );
+      if (statusText === "OK") {
+        localStorage.setItem("user", JSON.stringify(data.data[0]));
+        setLoading(false);
 
-    if (statusText === "OK") {
-      localStorage.setItem("user", JSON.stringify(data.data[0]));
-      setLoading(false);
-
-      setAuth({
-        isAuthenticated: true,
-        user: {
-          name: data.data[0].name,
-          email: data.data[0].email,
-          id: data.data[0].id,
-        },
+        setAuth({
+          isAuthenticated: true,
+          user: {
+            name: data.data[0].name,
+            email: data.data[0].email,
+            id: data.data[0].id,
+          },
+        });
+        router.push("/");
+      }
+    } catch (error: any) {
+      setNotifications((prev) => {
+        return {
+          notifications: [
+            ...prev.notifications,
+            {
+              text: error?.response?.data?.message ?? error?.message ?? "",
+              type: "error",
+            },
+          ],
+        };
       });
-      router.push("/");
     }
     setLoading(false);
   };
