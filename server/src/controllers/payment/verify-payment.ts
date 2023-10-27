@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import dbError from "../../utils/db-error";
 import crypto from "crypto";
 import { genToken, getPrisma, sendResponse } from "../../utils/functions";
+import { getAccountDetails } from "../account-details/get-account-details";
 
 export async function verifyPayment(req: Request, res: Response) {
   try {
@@ -14,12 +15,10 @@ export async function verifyPayment(req: Request, res: Response) {
       .update(body.toString())
       .digest("hex");
 
-    console.log(expectedSignature);
-
     const targetOrder = await prisma.init_order.findFirst({
       where: {
         userId: req.currentUser.id,
-        orderId: response.order_id,
+        orderId: response.razorpay_order_id,
       },
     });
     if (!targetOrder) {
@@ -79,7 +78,7 @@ export async function verifyPayment(req: Request, res: Response) {
       },
     });
 
-    sendResponse(res, [response], "Payment Successful.");
+    getAccountDetails(req, res);
   } catch (error) {
     dbError(res, error);
   }
