@@ -41,7 +41,6 @@ export default async function RootLayout({
     }
   }
 
-  console.log(error);
   return (
     <html lang="en">
       <body className={inter.className}>

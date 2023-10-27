@@ -25,6 +25,7 @@ function HomeComponent({ finalData }: Props) {
   const [updatingModel, setUpdatingModel] = useState(false);
   const [data, setData] = useRecoilState(DataState);
   const [model, setModel] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const toggleCreateModel = () => {
     setOpenCreateModel((prev) => !prev);
@@ -39,15 +40,16 @@ function HomeComponent({ finalData }: Props) {
         );
         projectData = data.data;
       }
-      if (finalData) {
+      if (projectData) {
         setData((currentValue) => {
           const updatedValue: DataStateType = JSON.parse(
             JSON.stringify(currentValue)
           );
 
-          updatedValue.projects = finalData;
+          updatedValue.projects = projectData;
           return updatedValue;
         });
+        setLoading(false);
       }
     })();
   }, [finalData]);
@@ -164,11 +166,15 @@ function HomeComponent({ finalData }: Props) {
           </Button>
         )}
       </div>
-      {data.activeProject ? (
+      {loading ? (
+        <div className="flex justify-center items-center mt-4">
+          <Loading size="large" />
+        </div>
+      ) : data.activeProject ? (
         data.activeApi ? (
           <EditApi model={model} setModel={setModel} />
         ) : (
-          <ApiList />
+          <ApiList setLoading={setLoading} />
         )
       ) : (
         <ProjectList />

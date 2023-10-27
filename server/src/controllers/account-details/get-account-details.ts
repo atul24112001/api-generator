@@ -1,13 +1,20 @@
 import { Request, Response } from "express";
 import dbError from "../../utils/db-error";
-import { getPrisma, sendResponse } from "../../utils/functions";
-import { genToken } from "../../utils/functions";
+import { getPrisma, sendResponse, genToken } from "../../utils/functions";
 
 export async function getAccountDetails(req: Request, res: Response) {
   try {
     const prisma = getPrisma();
-    const user = req.currentUser;
+    const user = await prisma.user.findFirst({
+      where: {
+        id: req.currentUser.id,
+      },
+    });
+    if (!user) {
+      return;
+    }
     let secretKey: any = user.secretKey;
+
     if (!secretKey) {
       const newSecret = genToken(
         {
@@ -56,7 +63,7 @@ export async function getAccountDetails(req: Request, res: Response) {
         secret: secretKey,
         requestsRemaining: !order ? user.freeRequests : order.totalRequests,
         totalProjects,
-        subscriptionType: order?.type || user.subscriptionType,
+        subscriptionType: order?.type || req.currentUser.subscriptionType,
       },
     ]);
   } catch (error) {

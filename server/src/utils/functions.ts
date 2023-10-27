@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import prismaClient from "@prisma/client";
 import { Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -11,11 +11,11 @@ export const getRazorpayInstance = () => {
   });
 };
 
-let prisma: null | PrismaClient = null;
+let prisma: null | prismaClient.PrismaClient = null;
 
 export function getPrisma() {
   if (!prisma) {
-    prisma = new PrismaClient();
+    prisma = new prismaClient.PrismaClient();
   }
   return prisma;
 }

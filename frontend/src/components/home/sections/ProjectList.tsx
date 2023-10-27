@@ -38,36 +38,40 @@ function ProjectList({}: Props) {
         <div>Title</div>
         <div>Actions</div>
       </div>
-      {data.projects.map((project, index) => {
-        return (
-          <div
-            onClick={() => {
-              setData((prev) => {
-                const updatedState = JSON.parse(JSON.stringify(prev));
-                updatedState.activeProject = project;
-                return updatedState;
-              });
-            }}
-            className="flex justify-between items-center cursor-pointer py-2 px-4 rounded-md  hover:bg-primary-light-2"
-            key={`${project.id}-${index}`}
-          >
-            <div>{project.title}</div>
-            <div>
-              <IconsButton
-                onClick={() => {
-                  deleteProjectHandler(project.id);
-                }}
-              >
-                {deletingAPi === project.id ? (
-                  <Loading />
-                ) : (
-                  <Trash size={18} className="text-red-500" />
-                )}
-              </IconsButton>
+      {data.projects.length == 0 ? (
+        <div className="text-center opacity-60">No Projects, add one</div>
+      ) : (
+        data.projects.map((project, index) => {
+          return (
+            <div
+              onClick={() => {
+                setData((prev) => {
+                  const updatedState = JSON.parse(JSON.stringify(prev));
+                  updatedState.activeProject = project;
+                  return updatedState;
+                });
+              }}
+              className="flex justify-between items-center cursor-pointer py-2 px-4 rounded-md  hover:bg-primary-light-2"
+              key={`${project.id}-${index}`}
+            >
+              <div>{project.title}</div>
+              <div>
+                <IconsButton
+                  onClick={() => {
+                    deleteProjectHandler(project.id);
+                  }}
+                >
+                  {deletingAPi === project.id ? (
+                    <Loading />
+                  ) : (
+                    <Trash size={18} className="text-red-500" />
+                  )}
+                </IconsButton>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })
+      )}
     </div>
   );
 }

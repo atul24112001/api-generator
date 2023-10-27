@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && cross-env NODE_ENV=production node dist/app.js",
-    "dev": "cross-env NODE_ENV=development nodemon src/app.ts"
+    "start": "npx prisma generate && npx prisma migrate deploy && tsc && node dist/app.js",
+    "dev": "nodemon src/app.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Atul Morchhlay",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.1.1",

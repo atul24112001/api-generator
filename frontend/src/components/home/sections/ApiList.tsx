@@ -6,14 +6,17 @@ import { Edit, Trash } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
-type Props = {};
+type Props = {
+  setLoading: (state: boolean) => void;
+};
 
-function ApiList({}: Props) {
+function ApiList({ setLoading }: Props) {
   const [data, setData] = useRecoilState(DataState);
   const [deletingAPi, setDeletingAPi] = useState<number | null>(null);
 
   useEffect(() => {
     if (data.activeProject && !data.apis[data.activeProject.id]) {
+      setLoading(true);
       (async () => {
         try {
           const { data: response } = await apiClient.get(
@@ -27,6 +30,7 @@ function ApiList({}: Props) {
         } catch (error) {
           console.log(error);
         }
+        setLoading(false);
       })();
     }
   }, [data.activeApi]);
@@ -65,37 +69,41 @@ function ApiList({}: Props) {
         <div>Title</div>
         <div>Actions</div>
       </div>
-      {(data.apis[data.activeProject?.id ?? 0] ?? []).map((api, index) => {
-        return (
-          <div
-            onClick={() => {
-              setData((prev) => {
-                const updatedState = JSON.parse(JSON.stringify(prev));
-                // updatedState. = api;
-                updatedState.activeApi = api;
-                return updatedState;
-              });
-            }}
-            className="flex justify-between items-center cursor-pointer py-2 px-4 rounded-md  hover:bg-primary-light-2"
-            key={`${api.id}-${index}`}
-          >
-            <div>{api.title}</div>
-            <div>
-              <IconsButton
-                onClick={() => {
-                  deleteApiHandler(api.id);
-                }}
-              >
-                {deletingAPi === api.id ? (
-                  <Loading />
-                ) : (
-                  <Trash size={18} className="text-red-500" />
-                )}
-              </IconsButton>
+      {(data.apis[data.activeProject?.id ?? 0] ?? []).length == 0 ? (
+        <div className="text-center pt-5 opacity-60">No Apis, add one</div>
+      ) : (
+        (data.apis[data.activeProject?.id ?? 0] ?? []).map((api, index) => {
+          return (
+            <div
+              onClick={() => {
+                setData((prev) => {
+                  const updatedState = JSON.parse(JSON.stringify(prev));
+                  // updatedState. = api;
+                  updatedState.activeApi = api;
+                  return updatedState;
+                });
+              }}
+              className="flex justify-between items-center cursor-pointer py-2 px-4 rounded-md  hover:bg-primary-light-2"
+              key={`${api.id}-${index}`}
+            >
+              <div>{api.title}</div>
+              <div>
+                <IconsButton
+                  onClick={() => {
+                    deleteApiHandler(api.id);
+                  }}
+                >
+                  {deletingAPi === api.id ? (
+                    <Loading />
+                  ) : (
+                    <Trash size={18} className="text-red-500" />
+                  )}
+                </IconsButton>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })
+      )}
     </div>
   );
 }

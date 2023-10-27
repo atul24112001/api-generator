@@ -139,20 +139,23 @@ function Plans({}: Props) {
                 ? "scale-105  bg-background-secondary"
                 : "bg-primary-light-5"
             } flex-1  rounded-md p-4`}
-            key={index}
+            key={`${index + 1}`}
           >
             <div className="font-bold text-center text-2xl mb-2">
               {subs.title}
             </div>
-            {subs.benefits.map((benefit, index) => {
+            {subs.benefits.map((benefit, jndex) => {
               return (
-                <div key={index} className="font-semibold  text-md">
-                  {index + 1}. {benefit}
+                <div
+                  key={`${index + 1}-${jndex + 1}`}
+                  className="font-semibold  text-md"
+                >
+                  {jndex + 1}. {benefit}
                 </div>
               );
             })}
             <div className="flex justify-center mt-4">
-              {
+              {data.currentPlane?.subscriptionType != "premium" && (
                 <Button
                   fullWidth
                   onClick={() => {
@@ -168,7 +171,7 @@ function Plans({}: Props) {
                     ? "Current Plane"
                     : `₹ ${subs.price || "Free"}`}
                 </Button>
-              }
+              )}
             </div>
           </div>
         );
@@ -190,12 +193,12 @@ const Data = [
     price: 5000,
     title: "Premium",
     type: "premium",
-    benefits: ["Total 1 million CURD operations", "Unlimited Project Maximum."],
+    benefits: ["Total 1 million CURD operations", "Unlimited Projects."],
   },
   {
     price: 1000,
     title: "Standard",
     type: "standard",
-    benefits: ["Total 100k CURD operations", "10 Project Maximum."],
+    benefits: ["Total 100k CURD operations", "10 Projects Maximum."],
   },
 ];

@@ -13,7 +13,7 @@ import projectRouter from "./routes/project.routes";
 import paymentRouter from "./routes/payment.routes";
 
 config({
-  path: path.join(__dirname, `../.env.${process.env.NODE_ENV}`),
+  path: path.join(__dirname, `../.env`),
 });
 
 const PORT = process.env.PORT;
