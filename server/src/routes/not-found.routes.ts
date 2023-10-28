@@ -1,5 +1,7 @@
 import { Request, Response, Router } from "express";
 import { corsHandler } from "../middlewares/cordHandler";
+import cors from "cors";
+import { corsOptions } from "../utils/functions";
 const notFoundRouter = Router();
 
 const notFound = async (req: Request, res: Response) => {
@@ -10,10 +12,10 @@ const notFound = async (req: Request, res: Response) => {
     );
 };
 
-notFoundRouter.get("/", corsHandler, notFound);
-notFoundRouter.post("/", corsHandler, notFound);
-notFoundRouter.put("/", corsHandler, notFound);
-notFoundRouter.patch("/", corsHandler, notFound);
-notFoundRouter.delete("/", corsHandler, notFound);
+notFoundRouter.get("/", cors(corsOptions), notFound);
+notFoundRouter.post("/", cors(corsOptions), notFound);
+notFoundRouter.put("/", cors(corsOptions), notFound);
+notFoundRouter.patch("/", cors(corsOptions), notFound);
+notFoundRouter.delete("/", cors(corsOptions), notFound);
 
 export default notFoundRouter;

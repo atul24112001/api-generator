@@ -14,7 +14,6 @@ export async function checkAuth(
     const token = cookie["token"] || authorization?.split(" ")[1];
     const prisma = getPrisma();
 
-    console.log(req.get("origin"));
     if (!token) {
       dbError(res, "Access Denied.", 400);
       return;

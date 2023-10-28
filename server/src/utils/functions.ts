@@ -20,6 +20,10 @@ export function getPrisma() {
   return prisma;
 }
 
+export const corsOptions = {
+  origin: [process.env.CLIENT_URL as string],
+};
+
 export function sendResponse(
   res: Response,
   data: any[],
@@ -87,7 +91,6 @@ export const sanitizePostData = (
   errors: string[] = [],
   path?: string
 ) => {
-  console.log(schema);
   for (let key in schema) {
     if (!data[key]) {
       if (schema[key].optional) {

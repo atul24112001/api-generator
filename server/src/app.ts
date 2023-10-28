@@ -20,7 +20,6 @@ config({
 const PORT = process.env.PORT;
 const app = Express();
 app.use(Express.json({ limit: "10mb" }));
-app.use(cors());
 app.use(cookieParse());
 app.use(morgan("dev"));
 

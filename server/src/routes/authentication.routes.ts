@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { login, signup, verifyUserToken } from "../controllers/authentication";
-import { corsHandler } from "../middlewares";
+import cors from "cors";
+import { corsOptions } from "../utils/functions";
 const authRouter = Router();
 
-authRouter.post("/signup", corsHandler, signup);
-authRouter.get("/verify", corsHandler, verifyUserToken);
-authRouter.post("/login", corsHandler, login);
+authRouter.post("/signup", cors(corsOptions), signup);
+authRouter.get("/verify", cors(corsOptions), verifyUserToken);
+authRouter.post("/login", cors(corsOptions), login);
 
 export default authRouter;

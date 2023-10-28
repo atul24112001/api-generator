@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { checkAuth, corsHandler, verifyPath } from "../middlewares";
+import { checkAuth, verifyPath } from "../middlewares";
 import {
   createApi,
   deleteApi,
@@ -7,12 +7,14 @@ import {
   updateApi,
   getModel,
 } from "../controllers/api-generator";
+import cors from "cors";
+import { corsOptions } from "../utils/functions";
 
 const apiGeneratorRouter = Router();
 
 apiGeneratorRouter.get(
   "/:projectId",
-  corsHandler,
+  cors(corsOptions),
   checkAuth,
   verifyPath(true, false),
   getApis
@@ -20,7 +22,7 @@ apiGeneratorRouter.get(
 
 apiGeneratorRouter.get(
   "/:projectId/:apiId",
-  corsHandler,
+  cors(corsOptions),
   checkAuth,
   verifyPath(true, true),
   getModel
@@ -28,7 +30,7 @@ apiGeneratorRouter.get(
 
 apiGeneratorRouter.post(
   "/:projectId",
-  corsHandler,
+  cors(corsOptions),
   checkAuth,
   verifyPath(true, false),
   createApi
@@ -36,7 +38,7 @@ apiGeneratorRouter.post(
 
 apiGeneratorRouter.patch(
   "/:projectId/:apiId",
-  corsHandler,
+  cors(corsOptions),
   checkAuth,
   verifyPath(true, true),
   updateApi
@@ -44,7 +46,7 @@ apiGeneratorRouter.patch(
 
 apiGeneratorRouter.delete(
   "/:projectId/:apiId",
-  corsHandler,
+  cors(corsOptions),
   checkAuth,
   verifyPath(true, true),
   deleteApi
