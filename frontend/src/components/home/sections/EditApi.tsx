@@ -7,10 +7,11 @@ import JsonEditor from "@/components/helper/jsonEditor/JsonEditor";
 import DataState from "@/recoil/data/dataAtom";
 import NotificationState from "@/recoil/notification/notificationAtom";
 import { useClipboard } from "@mantine/hooks";
-import { ArrowLeft, Copy } from "lucide-react";
+import { ArrowLeft, Check, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import Endpoint from "./Endpoint";
 
 type Props = {
   model: any;
@@ -96,21 +97,7 @@ function EditApi({ model, setModel }: Props) {
       >
         <div className="mt-2">
           {endpoints.map((endpoint) => {
-            return (
-              <div className="mt-2 mb-4" key={endpoint.mode}>
-                <div className="text-md font-semibold">{endpoint.mode}</div>
-                <div className="bg-background-secondary flex items-center justify-between rounded-md mt-1 py-2 px-4">
-                  <div>{endpoint.endpoint}</div>
-                  <IconsButton
-                    onClick={() => {
-                      clipboard.copy(endpoint.endpoint);
-                    }}
-                  >
-                    <Copy />
-                  </IconsButton>
-                </div>
-              </div>
-            );
+            return <Endpoint endpoint={endpoint} key={endpoint.mode} />;
           })}
         </div>
       </Accordion>

@@ -4,12 +4,24 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Lobster&family=Nunito+Sans:ital,opsz,wght@0,6..12,200;0,6..12,300;0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;1,6..12,200&display=swap');
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 15, 15, 15;
+  --background-end-rgb: 15, 15, 15;
+  --background-primary: 15, 15, 15;
   --background-secondary: 35, 45, 63;
   --primary-dark: 0, 91, 65;
   --primary-light: 0, 129, 112;
+  --primary-light-1: 0, 129, 112, 0.1;
+  --primary-light-2: 0, 129, 112, 0.2;
+  --primary-light-3: 0, 129, 112, 0.3;
+  --primary-light-4: 0, 129, 112, 0.4;
+  --primary-light-5: 0, 129, 112, 0.5;
+  --primary-light-6: 0, 129, 112, 0.6;
+  --primary-light-7: 0, 129, 112, 0.7;
+  --primary-light-8: 0, 129, 112, 0.8;
+
+  --text-primary: 255, 255, 255;
+  --text-secondary: 146, 146, 146;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -33,6 +45,8 @@
     --text-primary: 255, 255, 255;
     --text-secondary: 146, 146, 146;
 
+
+
     --cursive-text: 'Lobster', sans-serif;
     --primary-text: 'Nunito Sans', sans-serif;
   }
@@ -40,6 +54,7 @@
 
 * {
   font-family: var(--primary-text);
+  /* color: var(--text-primary); */
   box-sizing: border-box;
 }
 

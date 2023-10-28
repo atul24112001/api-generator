@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../helper/Button";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import DataState from "@/recoil/data/dataAtom";
@@ -15,7 +15,7 @@ type Props = {};
 
 function Plans({}: Props) {
   const [Razorpay] = useRazorpay();
-  const [data] = useRecoilState(DataState);
+  const [data, setData] = useRecoilState(DataState);
   const [authData] = useRecoilState(AuthenticationState);
 
   const [processingPayment, setProcessingPayment] = useState(false);
@@ -23,6 +23,43 @@ function Plans({}: Props) {
   const [paymentError, setPaymentError] = useState(false);
 
   const setNotifications = useSetRecoilState(NotificationState);
+
+  useEffect(() => {
+    (async () => {
+      if (!data.currentPlane) {
+        try {
+          const { data: response } = await apiClient.get(
+            `/api/account-details`
+          );
+
+          const accountDetails = response.data[0];
+          if (accountDetails) {
+            setData((prev) => {
+              return {
+                ...prev,
+                currentPlane: accountDetails,
+              };
+            });
+          }
+        } catch (error: any) {
+          if (error instanceof Error) {
+            setNotifications((prev) => {
+              return {
+                notifications: [
+                  ...prev.notifications,
+                  {
+                    text:
+                      error?.response?.data?.message ?? error?.message ?? "",
+                    type: "error",
+                  },
+                ],
+              };
+            });
+          }
+        }
+      }
+    })();
+  }, []);
 
   const handlePayment = async (plan: {
     price: number;
@@ -62,6 +99,13 @@ function Plans({}: Props) {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,
             });
+            setData((prev) => {
+              const updated = JSON.parse(JSON.stringify(prev));
+              updated.currentPlane = data[0];
+
+              return updated;
+            });
+            setProcessingPayment(false);
             setPaymentSuccess(true);
             setTimeout(() => {
               setPaymentSuccess(false);
@@ -86,6 +130,8 @@ function Plans({}: Props) {
               amount: plan.price * 100,
             }
           );
+
+          setProcessingPayment(false);
           setPaymentError(true);
           setTimeout(() => {
             setPaymentError(false);
@@ -109,7 +155,6 @@ function Plans({}: Props) {
       });
       console.log(error);
     }
-    setProcessingPayment(false);
   };
 
   return processingPayment || paymentSuccess || paymentError ? (
@@ -117,7 +162,7 @@ function Plans({}: Props) {
       {paymentError ? (
         <>
           <div className="text-center text-3xl text-white mb-4">
-            Sorry, Processing Unsuccessful
+            Sorry, Payment Unsuccessful
           </div>
           <div className="flex justify-center">
             <XCircle size={48} color="#fa1b2e" />
@@ -126,7 +171,7 @@ function Plans({}: Props) {
       ) : paymentSuccess ? (
         <>
           <div className="text-center text-3xl text-white mb-4">
-            Processing Successful
+            Payment Successful
           </div>
           <div className="flex justify-center">
             <CheckCircle size={48} color="#06ab03" />
