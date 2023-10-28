@@ -11,6 +11,7 @@ import dataRouter from "./routes/data.routes";
 import accountDetailsRouter from "./routes/account-details.routes";
 import projectRouter from "./routes/project.routes";
 import paymentRouter from "./routes/payment.routes";
+import notFoundRouter from "./routes/not-found.routes";
 
 config({
   path: path.join(__dirname, `../.env`),
@@ -29,6 +30,8 @@ app.use("/api/data", dataRouter);
 app.use("/api/account-details", accountDetailsRouter);
 app.use("/api/project", projectRouter);
 app.use("/api/payment", paymentRouter);
+
+app.use("*", notFoundRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

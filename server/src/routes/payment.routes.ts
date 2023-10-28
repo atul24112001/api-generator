@@ -6,12 +6,13 @@ import {
   verifyPayment,
   paymentDetails,
 } from "../controllers/payment";
+import { corsHandler } from "../middlewares";
 
 const paymentRoutes = Router();
 
-paymentRoutes.post("/create", checkAuth, createOrder);
-paymentRoutes.post("/verify", checkAuth, verifyPayment);
-paymentRoutes.get("/key", checkAuth, getRazorpayKey);
-paymentRoutes.post("/payment-details", checkAuth, paymentDetails);
+paymentRoutes.post("/create", corsHandler, checkAuth, createOrder);
+paymentRoutes.post("/verify", corsHandler, checkAuth, verifyPayment);
+paymentRoutes.get("/key", corsHandler, checkAuth, getRazorpayKey);
+paymentRoutes.post("/payment-details", corsHandler, checkAuth, paymentDetails);
 
 export default paymentRoutes;
