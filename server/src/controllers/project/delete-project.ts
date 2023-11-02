@@ -26,14 +26,20 @@ export async function deleteProject(req: Request, res: Response) {
     });
 
     if (targetApis.length > 0) {
+      const ids = targetApis.map((a: { id: number }) => a.id);
+      await prisma.data.deleteMany({
+        where: {
+          apiId: { in: ids },
+        },
+      });
       await prisma.api_model.deleteMany({
         where: {
-          apiId: { in: targetApis.map((a) => a.id) },
+          apiId: { in: ids },
         },
       });
       await prisma.api.deleteMany({
         where: {
-          id: { in: targetApis.map((a) => a.id) },
+          id: { in: ids },
         },
       });
     }
