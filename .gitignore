@@ -34,3 +34,6 @@ APIGenerator
 # typescript
 */*.tsbuildinfo
 */next-env.d.ts
+
+deploy.sh
+*/deployment.yaml
