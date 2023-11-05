@@ -52,6 +52,7 @@ function Authentication({ target }: Props) {
         setLoading(false);
         const cookies = headers["set-cookie"]?.[0] ?? "";
         const token = cookies.split("=")[1];
+        localStorage.setItem("token", token);
         setAuth({
           isAuthenticated: true,
           user: {

@@ -1,3 +1,5 @@
+"use client";
+
 import AuthenticationState from "@/recoil/authentication/authAtom";
 import axios, { Axios } from "axios";
 import { PropsWithChildren, createContext, useContext, useMemo } from "react";

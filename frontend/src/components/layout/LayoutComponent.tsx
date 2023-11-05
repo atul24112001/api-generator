@@ -3,10 +3,8 @@
 import AuthenticationState from "@/recoil/authentication/authAtom";
 import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
-import Button from "../helper/Button";
-import { redirect, useRouter } from "next/navigation";
-import { useCookies } from "next-client-cookies";
-// import { cookies } from "next/headers";
+import { useRouter } from "next/navigation";
+// import { useCookies } from "next-client-cookies";
 import {
   BadgeDollarSign,
   Home,
@@ -18,10 +16,8 @@ import {
 } from "lucide-react";
 import Logo from "../helper/Logo";
 import IconsButton from "../helper/IconsButton";
-import Link from "next/link";
 import ActiveLink from "../helper/ActiveLink";
 import Loading from "../helper/Loading";
-import Model from "../helper/Model";
 import NotificationState from "@/recoil/notification/notificationAtom";
 import AxiosContextProvider from "@/apiClient/apiClient";
 
@@ -56,7 +52,7 @@ function LayoutComponent({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useRecoilState(NotificationState);
-  const cookies = useCookies();
+  // const cookies = useCookies();
 
   const router = useRouter();
 
@@ -64,7 +60,7 @@ function LayoutComponent({
 
   useEffect(() => {
     const cache = localStorage.getItem("user");
-    const token = cookies.get("token");
+    const token = localStorage.getItem("token");
     if (cache && hasCookie && !error && token) {
       const user = JSON.parse(cache);
       setAuth({
