@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import Button from "../helper/Button";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import DataState from "@/recoil/data/dataAtom";
 import useRazorpay from "react-razorpay";
 import AuthenticationState from "@/recoil/authentication/authAtom";
-import apiClient from "@/apiClient/apiClient";
+import { useAxios } from "@/apiClient/apiClient";
 import Loading from "../helper/Loading";
 import { CheckCircle, XCircle } from "lucide-react";
 import NotificationState from "@/recoil/notification/notificationAtom";
@@ -17,16 +17,18 @@ function Plans({}: Props) {
   const [Razorpay] = useRazorpay();
   const [data, setData] = useRecoilState(DataState);
   const [authData] = useRecoilState(AuthenticationState);
+  const { apiClient } = useAxios();
 
   const [processingPayment, setProcessingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentError, setPaymentError] = useState(false);
+  const auth = useRecoilValue(AuthenticationState);
 
   const setNotifications = useSetRecoilState(NotificationState);
 
   useEffect(() => {
     (async () => {
-      if (!data.currentPlane) {
+      if (!data.currentPlane && auth.isAuthenticated) {
         try {
           const { data: response } = await apiClient.get(
             `/api/account-details`
@@ -59,7 +61,7 @@ function Plans({}: Props) {
         }
       }
     })();
-  }, []);
+  }, [auth.isAuthenticated]);
 
   const handlePayment = async (plan: {
     price: number;

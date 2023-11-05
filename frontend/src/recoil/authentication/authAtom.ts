@@ -9,11 +9,13 @@ export type User = {
 const AuthenticationState = atom<{
   user: null | User;
   isAuthenticated: boolean;
+  token: null | string;
 }>({
   key: "AUTHENTICATION_STATE",
   default: {
     user: null,
     isAuthenticated: false,
+    token: null,
   },
 });
 

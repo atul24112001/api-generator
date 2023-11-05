@@ -6,10 +6,12 @@ import IconsButton from "../helper/IconsButton";
 import { Check, Copy } from "lucide-react";
 import { useClipboard } from "@mantine/hooks";
 import DataState from "@/recoil/data/dataAtom";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import apiClient from "@/apiClient/apiClient";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import Loading from "../helper/Loading";
 import NotificationState from "@/recoil/notification/notificationAtom";
+import AuthenticationState from "@/recoil/authentication/authAtom";
+import Endpoint from "../home/sections/Endpoint";
+import { useAxios } from "@/apiClient/apiClient";
 
 type Props = {};
 
@@ -19,13 +21,16 @@ function AccountDetails({}: Props) {
   const [data, setData] = useRecoilState(DataState);
   const [loading, setLoading] = useState(!data.currentPlane);
   const setNotifications = useSetRecoilState(NotificationState);
+  const auth = useRecoilValue(AuthenticationState);
+
+  const { apiClient } = useAxios();
 
   useEffect(() => {
     (async () => {
-      if (!data.currentPlane) {
+      if (!data.currentPlane && auth.isAuthenticated) {
         try {
           const { data: response } = await apiClient.get(
-            `/api/account-details`
+            `${process.env.API_URL}/api/account-details`
           );
 
           const accountDetails = response.data[0];
@@ -57,7 +62,7 @@ function AccountDetails({}: Props) {
         }
       }
     })();
-  }, []);
+  }, [auth.isAuthenticated]);
 
   return loading ? (
     <div className="flex justify-center items-center mt-4">
@@ -65,51 +70,51 @@ function AccountDetails({}: Props) {
     </div>
   ) : (
     <div className="mt-8  rounded-md">
-      <div className=" mb-6 py-2 px-4 bg-primary-light-2 rounded-md">
+      <div>
         {data.currentPlane?.subscriptionType == "free" && (
           <>
-            <div className="font-bold text-xl">
-              <span className="text-primary-light">
-                Requests Remaining in free trial
-              </span>{" "}
-              - {data.currentPlane?.requestsRemaining}
-            </div>
-            <div className="font-bold text-xl">
-              <span className="text-primary-light">
-                Max no. of Projects that can be created
-              </span>{" "}
-              - 1
-            </div>
+            <Endpoint
+              endpoint={{
+                mode: "Requests Remaining in free trial",
+                endpoint: data.currentPlane?.requestsRemaining.toString() ?? "",
+              }}
+            />
+            <Endpoint
+              endpoint={{
+                mode: " Max no. of Projects that can be created",
+                endpoint: "1",
+              }}
+            />
           </>
         )}
         {data.currentPlane?.subscriptionType != "free" && (
           <>
-            <div className="font-bold text-xl">
-              <span className="text-primary-light">Subscription type</span> -{" "}
-              {data.currentPlane?.subscriptionType}
-            </div>
-            <div className="font-bold text-xl">
-              <span className="text-primary-light">Requests Remaining</span> -{" "}
-              {data.currentPlane?.requestsRemaining}
-            </div>
-            {data.currentPlane?.subscriptionType == "premium" ? (
-              <div className="font-bold text-xl">
-                <span className="text-primary-light">
-                  Max no. of Projects that can be created
-                </span>{" "}
-                - Unlimited
-              </div>
-            ) : (
-              <div className="font-bold text-xl">
-                <span className="text-primary-light">
-                  Max no. of Projects that can be created
-                </span>{" "}
-                - Unlimited
-              </div>
-            )}
+            <Endpoint
+              endpoint={{
+                mode: "Subscription type",
+                endpoint: data.currentPlane?.subscriptionType ?? "",
+              }}
+            />
+            <Endpoint
+              endpoint={{
+                mode: "Requests Remaining",
+                endpoint:
+                  data.currentPlane?.requestsRemaining?.toString() ?? "",
+              }}
+            />
+            <Endpoint
+              endpoint={{
+                mode: "Max no. of Projects that can be created",
+                endpoint:
+                  data.currentPlane?.subscriptionType == "premium"
+                    ? "Unlimited"
+                    : "10",
+              }}
+            />
           </>
         )}
       </div>
+
       <TextField
         name="secret"
         message="*Use this secret as Bearer token with you api, please don't share."

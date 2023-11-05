@@ -5,8 +5,8 @@ import { RecoilRoot } from "recoil";
 import RecoilContextProvider from "@/components/helper/RecoilContextProvider";
 import LayoutComponent from "@/components/layout/LayoutComponent";
 import { cookies } from "next/headers";
-import apiClient from "@/apiClient/apiClient";
 import { RedirectType, redirect } from "next/navigation";
+import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,12 +26,13 @@ export default async function RootLayout({
     const cookieStore = cookies();
     const cookie = cookieStore.get("token");
     if (cookie?.value) {
-      await apiClient.get(`${process.env.API_URL}/api/authentication/verify`, {
+      await axios.get(`${process.env.API_URL}/api/authentication/verify`, {
         headers: {
           Authorization: `Bearer ${cookie.value}`,
         },
       });
       error = false;
+      redirect("/");
     } else {
       hasCookie = false;
     }

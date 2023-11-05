@@ -92,39 +92,41 @@ function JsonEditor({ data, onChange }: Props) {
 
   return (
     <div className="mt-4">
-      <div className="flex items-center gap-4">
-        <div className="flex-1">
+      <div className=" md:flex items-center gap-4">
+        <div className="flex-1 ">
           <TextField name="key" ref={keyRef} />
         </div>
-        {selectedType.value == "array" && (
+        <div className="flex items-center gap-4">
+          {selectedType.value == "array" && (
+            <Select
+              name="childType"
+              onChange={(name, value) => {
+                setChildType(value);
+              }}
+              options={DataTypeOptions}
+              value={childType}
+              placeholder="Child Type"
+            />
+          )}
           <Select
-            name="childType"
+            name="type"
             onChange={(name, value) => {
-              setChildType(value);
+              setSelectedType(value);
             }}
             options={DataTypeOptions}
-            value={childType}
-            placeholder="Child Type"
+            value={selectedType}
           />
-        )}
-        <Select
-          name="type"
-          onChange={(name, value) => {
-            setSelectedType(value);
-          }}
-          options={DataTypeOptions}
-          value={selectedType}
-        />
 
-        <div className="mb-3">
-          <Button onClick={() => setOptional((prev) => !prev)}>
-            {optional ? "Optional" : "Required"}
-          </Button>
-        </div>
-        <div className="mb-3">
-          <Button onClick={addFieldHandler}>
-            {editing ? "Update" : "Add"}
-          </Button>
+          <div className="flex-1 mb-3">
+            <Button fullWidth onClick={() => setOptional((prev) => !prev)}>
+              {optional ? "Optional" : "Required"}
+            </Button>
+          </div>
+          <div className="flex-1 mb-3">
+            <Button fullWidth onClick={addFieldHandler}>
+              {editing ? "Update" : "Add"}
+            </Button>
+          </div>
         </div>
       </div>
 

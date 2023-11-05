@@ -5,7 +5,8 @@ import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
 import Button from "../helper/Button";
 import { redirect, useRouter } from "next/navigation";
-import { cookies } from "next/headers";
+import { useCookies } from "next-client-cookies";
+// import { cookies } from "next/headers";
 import {
   BadgeDollarSign,
   Home,
@@ -22,6 +23,7 @@ import ActiveLink from "../helper/ActiveLink";
 import Loading from "../helper/Loading";
 import Model from "../helper/Model";
 import NotificationState from "@/recoil/notification/notificationAtom";
+import AxiosContextProvider from "@/apiClient/apiClient";
 
 const Routes = [
   {
@@ -54,6 +56,7 @@ function LayoutComponent({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useRecoilState(NotificationState);
+  const cookies = useCookies();
 
   const router = useRouter();
 
@@ -61,7 +64,8 @@ function LayoutComponent({
 
   useEffect(() => {
     const cache = localStorage.getItem("user");
-    if (cache && hasCookie && !error) {
+    const token = cookies.get("token");
+    if (cache && hasCookie && !error && token) {
       const user = JSON.parse(cache);
       setAuth({
         isAuthenticated: true,
@@ -70,11 +74,13 @@ function LayoutComponent({
           name: user.name,
           id: user.id,
         },
+        token: token,
       });
     } else {
       setAuth({
         isAuthenticated: false,
         user: null,
+        token: null,
       });
       router.push("/authentication/login");
     }
@@ -86,6 +92,7 @@ function LayoutComponent({
     setAuth({
       isAuthenticated: false,
       user: null,
+      token: null,
     });
     router.push("/authentication/login");
   };
@@ -124,7 +131,7 @@ function LayoutComponent({
   }, []);
 
   return (
-    <>
+    <AxiosContextProvider>
       <div className=" ">
         {notifications.notifications.map((noti, index) => {
           let timeOut = setTimeout(() => {
@@ -139,7 +146,7 @@ function LayoutComponent({
               key={`${index + 10}`}
               className={`fixed right-0 top-[${
                 5 * index
-              }rem] p-8 w-screen lg:w-1/4`}
+              }rem] p-8 w-screen z-10  lg:w-1/4`}
             >
               <div
                 className={`rounded-md p-2 gap-3 flex justify-between ${
@@ -167,7 +174,7 @@ function LayoutComponent({
       {auth.isAuthenticated ? (
         <div className="lg:flex p-4 gap-4 items-center h-screen">
           {sidebarOpen ? (
-            <nav className="lg:hidden p-4 flex flex-col bg-background-secondary fixed top-0 left-0 right-0 md:right-1/2 bottom-0">
+            <nav className="lg:hidden p-4 flex flex-col bg-background-secondary fixed z-10  top-0 left-0 right-0 md:right-1/2 bottom-0">
               <div className=" flex justify-between items-center">
                 <Logo />
                 <IconsButton onClick={toggleSidebar}>
@@ -177,7 +184,7 @@ function LayoutComponent({
               {navigation}
             </nav>
           ) : (
-            <nav className="lg:hidden p-4 flex justify-between items-center">
+            <nav className="lg:hidden py-4 px-0 flex justify-between items-center">
               <div className="flex items-center gap-4 ">
                 <button onClick={toggleSidebar}>
                   <Menu />
@@ -212,7 +219,9 @@ function LayoutComponent({
                 </IconsButton>
               </div>
             </div>
-            <div className="overflow-auto px-4 py-2 flex-1">{children}</div>
+            <div className="overflow-auto px-0 lg:px-2 py-2 flex-1">
+              {children}
+            </div>
           </main>
         </div>
       ) : loading ? (
@@ -222,7 +231,7 @@ function LayoutComponent({
       ) : (
         <div>{children}</div>
       )}
-    </>
+    </AxiosContextProvider>
   );
 }
 

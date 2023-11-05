@@ -15,7 +15,7 @@ function Endpoint({ endpoint }: Props) {
     <div className="mt-2 mb-4">
       <div className="text-md font-semibold">{endpoint.mode}</div>
       <div className="bg-background-secondary flex items-center justify-between rounded-md mt-1 py-2 px-4">
-        <div>{endpoint.endpoint}</div>
+        <div className="overflow-auto">{endpoint.endpoint}</div>
         <IconsButton
           onClick={() => {
             clipboard.copy(endpoint.endpoint);

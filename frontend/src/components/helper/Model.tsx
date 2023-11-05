@@ -19,7 +19,7 @@ function Model({
   return open ? (
     <div
       onClick={onCancel}
-      className="fixed top-0 left-0 right-0 bottom-0 bg-primary-light-1 flex justify-center items-center"
+      className="fixed top-0 left-0 right-0 bottom-0 z-10 bg-primary-light-1 flex justify-center items-center"
     >
       <div
         onClick={(e) => {

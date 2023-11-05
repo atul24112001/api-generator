@@ -1,4 +1,4 @@
-import apiClient from "@/apiClient/apiClient";
+import { useAxios } from "@/apiClient/apiClient";
 import Accordion from "@/components/helper/Accordion";
 import Button from "@/components/helper/Button";
 import IconsButton from "@/components/helper/IconsButton";
@@ -24,6 +24,7 @@ function EditApi({ model, setModel }: Props) {
   const [data, setData] = useRecoilState(DataState);
   const [loading, setLoading] = useState(true);
   const clipboard = useClipboard();
+  const { apiClient } = useAxios();
   const setNotifications = useSetRecoilState(NotificationState);
 
   const endpoints = useMemo(() => {
@@ -88,26 +89,14 @@ function EditApi({ model, setModel }: Props) {
 
   return (
     <div>
-      <Accordion
-        header={
-          <div className="font-semibold text-center rounded-md py-2 bg-primary-light-4 text-xl mt-4">
-            Endpoints
-          </div>
-        }
-      >
+      <Accordion header="Endpoints">
         <div className="mt-2">
           {endpoints.map((endpoint) => {
             return <Endpoint endpoint={endpoint} key={endpoint.mode} />;
           })}
         </div>
       </Accordion>
-      <Accordion
-        header={
-          <div className="font-semibold  text-center rounded-md py-2 bg-primary-light-4 text-xl mt-4">
-            Model
-          </div>
-        }
-      >
+      <Accordion header="Model">
         {loading ? (
           <div className="flex justify-center">
             <Loading size="medium" />

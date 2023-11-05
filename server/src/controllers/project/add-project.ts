@@ -28,11 +28,12 @@ export async function addProject(req: Request, res: Response) {
         },
       });
 
-      if (user.subscriptionType == "free" && totalProjectsYet == 1) {
+      console.log(user);
+      if (!order && totalProjectsYet == 1) {
         return dbError(res, "Please subscribe to add more projects.");
       }
 
-      if (user.subscriptionType == "standard" && totalProjectsYet == 10) {
+      if (order?.type == "standard" && totalProjectsYet == 10) {
         return dbError(
           res,
           "Please upgrade your subscription to add more projects."

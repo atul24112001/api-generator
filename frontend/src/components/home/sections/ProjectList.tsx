@@ -1,4 +1,4 @@
-import apiClient from "@/apiClient/apiClient";
+import { useAxios } from "@/apiClient/apiClient";
 import IconsButton from "@/components/helper/IconsButton";
 import Loading from "@/components/helper/Loading";
 import DataState, { DataStateType } from "@/recoil/data/dataAtom";
@@ -12,6 +12,7 @@ type Props = {};
 function ProjectList({}: Props) {
   const [data, setData] = useRecoilState(DataState);
   const [deletingAPi, setDeletingAPi] = useState<number | null>(null);
+  const { apiClient } = useAxios();
 
   const setNotifications = useSetRecoilState(NotificationState);
 

@@ -4,8 +4,8 @@ import Button from "../helper/Button";
 import { ArrowLeft, Delete, Edit, Plus, Trash } from "lucide-react";
 import Model from "../helper/Model";
 import TextField from "../helper/TextField";
-import apiClient from "@/apiClient/apiClient";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useAxios } from "@/apiClient/apiClient";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import DataState, { DataStateType } from "@/recoil/data/dataAtom";
 import IconsButton from "../helper/IconsButton";
 import Loading from "../helper/Loading";
@@ -13,6 +13,7 @@ import ApiList from "./sections/ApiList";
 import EditApi from "./sections/EditApi";
 import ProjectList from "./sections/ProjectList";
 import NotificationState from "@/recoil/notification/notificationAtom";
+import AuthenticationState from "@/recoil/authentication/authAtom";
 
 type Props = {
   finalData: any;
@@ -27,6 +28,8 @@ function HomeComponent({ finalData }: Props) {
   const [data, setData] = useRecoilState(DataState);
   const [model, setModel] = useState({});
   const [loading, setLoading] = useState(true);
+  const auth = useRecoilValue(AuthenticationState);
+  const { apiClient } = useAxios();
 
   const setNotifications = useSetRecoilState(NotificationState);
 
@@ -38,7 +41,7 @@ function HomeComponent({ finalData }: Props) {
     let projectData = finalData;
     (async () => {
       try {
-        if (!projectData) {
+        if (!projectData && auth.isAuthenticated) {
           const { data } = await apiClient.get(
             `${process.env.API_URL}/api/project`
           );
@@ -69,7 +72,7 @@ function HomeComponent({ finalData }: Props) {
         });
       }
     })();
-  }, [finalData]);
+  }, [finalData, auth.isAuthenticated]);
 
   const createHandler = async () => {
     if (titleRef.current) {

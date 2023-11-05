@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
-import apiClient from "@/apiClient/apiClient";
+import { useAxios } from "@/apiClient/apiClient";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import AuthenticationState from "@/recoil/authentication/authAtom";
 import { redirect } from "next/navigation";
@@ -30,20 +30,28 @@ function Authentication({ target }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const setNotifications = useSetRecoilState(NotificationState);
+  const { apiClient } = useAxios();
+
+  useEffect(() => {
+    console.log("useEffect");
+    if (auth.isAuthenticated) {
+      router.refresh();
+    }
+  }, [auth.isAuthenticated]);
 
   const onSubmit = async (credentials: AuthData) => {
     setLoading(true);
 
     try {
-      const { data, statusText } = await apiClient.post(
+      const { data, statusText, headers } = await apiClient.post(
         `/api/authentication/${target}`,
         credentials
       );
-
       if (statusText === "OK") {
         localStorage.setItem("user", JSON.stringify(data.data[0]));
         setLoading(false);
-
+        const cookies = headers["set-cookie"]?.[0] ?? "";
+        const token = cookies.split("=")[1];
         setAuth({
           isAuthenticated: true,
           user: {
@@ -51,6 +59,7 @@ function Authentication({ target }: Props) {
             email: data.data[0].email,
             id: data.data[0].id,
           },
+          token: token,
         });
         router.push("/");
       }
