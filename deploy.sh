@@ -61,6 +61,6 @@ else
   echo "Docker image build failed."
   exit 1
 fi
-docker run -d -p $FRONTEND_PORT:3000 atul24112001/$FRONTEND_IMAGE_NAME:$IMAGE_TAG
+docker run --name $FRONTEND_IMAGE_NAME -d -p $FRONTEND_PORT:3000 atul24112001/$FRONTEND_IMAGE_NAME:$IMAGE_TAG
 
 echo "Build Successfully."
