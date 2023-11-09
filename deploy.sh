@@ -10,6 +10,7 @@ PORTS=(8001 8002)
 DATABASE_NAME="api_generator"
  
 cd ~/api-generator
+nvm use 20.9.0
 git pull origin main
 
 if [ $? -eq 0 ]; then
