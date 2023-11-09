@@ -12,7 +12,7 @@
   "author": "Atul Morchhlay",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.1.1",
+    "@prisma/client": "^5.5.2",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -35,7 +35,7 @@
     "@types/node": "^20.5.0",
     "@types/nodemailer": "^6.4.11",
     "nodemon": "^3.0.1",
-    "prisma": "^5.1.1",
+    "prisma": "^5.5.2",
     "ts-node": "^10.9.1"
   }
 }
