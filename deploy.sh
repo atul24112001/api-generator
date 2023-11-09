@@ -1,4 +1,5 @@
 #!/bin/bash
+export PATH=$PATH:/root/.nvm/versions/node/v16.14.2/bin
 
 BACKEND_IMAGE_NAME="api-generator-backend"
 DATABASE_URL="postgres://postgres:$POSTGRESS_DATABASE_PASSWORD@postgres_database:5432"
