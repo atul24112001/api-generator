@@ -8,7 +8,7 @@ const notFound = async (req: Request, res: Response) => {
   res
     .status(404)
     .send(
-      "<h1 style='text-align: center; padding: 1rem;'>Route no found, 404</h1>"
+      "<h1 style='text-align: center; padding: 1rem;'>Route no found, 404: V2</h1>"
     );
 };
 
