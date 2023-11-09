@@ -10,13 +10,12 @@ PORTS=(8001 8002)
 DATABASE_NAME="api_generator"
  
 cd ~/api-generator
-nvm use 20.9.0
 git pull origin main
 
 if [ $? -eq 0 ]; then
-  echo "Git backend pull successful."
+  echo "Git pull api generator successful."
 else
-  echo "Git backend pull failed. Aborting deployment."
+  echo "Git pull api generator failed. Aborting deployment."
   exit 1
 fi
 
@@ -31,7 +30,7 @@ done
 
 docker rmi atul24112001/$BACKEND_IMAGE_NAME:$IMAGE_TAG
 docker build -t atul24112001/$BACKEND_IMAGE_NAME:$IMAGE_TAG .
-IMAGE_ID=$(docker build -t $BACKEND_IMAGE_NAME:$IMAGE_TAG . | tail -n 1 | awk '{print $3}')
+docker build -t $BACKEND_IMAGE_NAME:$IMAGE_TAG .
 
 if [ $? -eq 0 ]; then
   echo "Docker image atul24112001/$BACKEND_IMAGE_NAME:$IMAGE_TAG built successfully."
@@ -42,7 +41,7 @@ fi
 
 for PORT in "${PORTS[@]}"
 do
-  docker run -e DATABASE_URL=$DATABASE_URL/$DATABASE_NAME --name $BACKEND_IMAGE_NAME-$PORT --network $DATABASE_NETWORK -d -p $PORT:8000 $IMAGE_ID
+  docker run -e DATABASE_URL=$DATABASE_URL/$DATABASE_NAME --name $BACKEND_IMAGE_NAME-$PORT --network $DATABASE_NETWORK -d -p $PORT:8000 atul24112001/$BACKEND_IMAGE_NAME:$IMAGE_TAG
 done
 
 cd ~/api-generator/frontend
