@@ -9,10 +9,11 @@ DATABASE_NETWORK="postgres_bridge"
 PORTS=(8001 8002)
 DATABASE_NAME="api_generator"
 
+git pull origin main
+
 pwd
 ls
 
-# git pull origin main
 # cd ~/server
 # npm install
 # cd ~/frontend
