@@ -19,5 +19,4 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > keyfile
           chmod 700 keyfile
           mkdir -p ~/.ssh
-          cp known_hosts ~/.ssh/known_hosts
           ssh -t -i keyfile $VPS_HOST "sudo bash ~/api-generator/deploy.sh "
