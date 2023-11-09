@@ -18,4 +18,5 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > keyfile
           chmod 600 keyfile
           mkdir -p ~/.ssh
+          cp known_hosts ~/.ssh/known_hosts
           ssh -t -i keyfile root@164.68.103.23 "sudo bash ~/api-generator/deploy.sh "
