@@ -9,11 +9,11 @@ PORTS=(8001 8002)
 DATABASE_NAME="api_generator"
 
 git pull origin main
-cd server
+cd ~/api-generator/server
 npm install
-cd ../frontend
+cd ~/api-generator/frontend
 npm install
-cd ..
+cd ~/api-generator
 
 if [ $? -eq 0 ]; then
   echo "Git backend pull successful."
@@ -22,15 +22,16 @@ else
   exit 1
 fi
 
-cd server
+cd ~/api-generator/server
 for PORT in "${PORTS[@]}"
 do
   docker stop $BACKEND_IMAGE_NAME-$PORT
   docker rm $BACKEND_IMAGE_NAME-$PORT
 done
+
 docker rmi atul24112001/$BACKEND_IMAGE_NAME
 docker build -t atul24112001/$BACKEND_IMAGE_NAME:$IMAGE_TAG .
-cd ..
+cd ~/api-generator
 
 if [ $? -eq 0 ]; then
   echo "Docker image atul24112001/$BACKEND_IMAGE_NAME:$IMAGE_TAG built successfully."
@@ -41,13 +42,13 @@ fi
 
 for PORT in "${PORTS[@]}"
 do
-  docker run -e DATABASE_URL=$DATABASE_URL/$DATABASE_NAME --name $BACKEND_IMAGE_NAME-$PORT --network $DATABASE_NETWORK -d -p $PORT:8000 atul24112001/$BACKEND_IMAGE_NAME
+  docker run -e DATABASE_URL=$DATABASE_URL/$DATABASE_NAME --name $BACKEND_IMAGE_NAME-$PORT --network $DATABASE_NETWORK -d -p $PORT:8000 atul24112001/$BACKEND_IMAGE_NAME:$IMAGE_TAG
 done
 
-cd frontend
+cd ~/api-generator/frontend
 rm -r .next
 npm run build
-cd ..
+cd ~/api-generator
 
 pm2 restart api-generator-frontend 
 
