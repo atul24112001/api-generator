@@ -19,4 +19,4 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > keyfile
           chmod 700 keyfile
           mkdir -p ~/.ssh
-          ssh -t -i keyfile $VPS_HOST "sudo bash ~/api-generator/deploy.sh "
+          ssh -tt -i keyfile $VPS_HOST "sudo bash ~/api-generator/deploy.sh "
