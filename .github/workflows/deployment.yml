@@ -16,6 +16,6 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           echo "$SSH_PRIVATE_KEY" > keyfile
-          chmod 700 keyfile
+          chmod 600 keyfile
           mkdir -p ~/.ssh
           ssh -t -i keyfile root@164.68.103.23 "sudo bash ~/api-generator/deploy.sh "
