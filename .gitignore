@@ -35,5 +35,5 @@ APIGenerator
 */*.tsbuildinfo
 */next-env.d.ts
 
-deploy.sh
-*/deployment.yaml
+# deploy.sh
+# */deployment.yaml
