@@ -8,7 +8,8 @@ IMAGE_TAG="latest"
 DATABASE_NETWORK="postgres_bridge"
 PORTS=(8001 8002)
 DATABASE_NAME="api_generator"
-
+ 
+cd ~/api-generator
 git pull origin main
 
 if [ $? -eq 0 ]; then
