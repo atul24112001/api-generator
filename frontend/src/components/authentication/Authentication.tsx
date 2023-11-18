@@ -48,10 +48,12 @@ function Authentication({ target }: Props) {
         credentials
       );
       localStorage.setItem("user", JSON.stringify(data.data[0]));
-      setLoading(false);
+
       const cookies = headers["set-cookie"]?.[0] ?? "";
       const token = cookies.split("=")[1];
       localStorage.setItem("token", token);
+      setLoading(false);
+
       setAuth({
         isAuthenticated: true,
         user: {
