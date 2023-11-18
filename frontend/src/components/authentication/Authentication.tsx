@@ -43,27 +43,25 @@ function Authentication({ target }: Props) {
     setLoading(true);
 
     try {
-      const { data, statusText, headers } = await apiClient.post(
+      const { data, headers } = await apiClient.post(
         `/api/authentication/${target}`,
         credentials
       );
-      if (statusText === "OK") {
-        localStorage.setItem("user", JSON.stringify(data.data[0]));
-        setLoading(false);
-        const cookies = headers["set-cookie"]?.[0] ?? "";
-        const token = cookies.split("=")[1];
-        localStorage.setItem("token", token);
-        setAuth({
-          isAuthenticated: true,
-          user: {
-            name: data.data[0].name,
-            email: data.data[0].email,
-            id: data.data[0].id,
-          },
-          token: token,
-        });
-        router.push("/");
-      }
+      localStorage.setItem("user", JSON.stringify(data.data[0]));
+      setLoading(false);
+      const cookies = headers["set-cookie"]?.[0] ?? "";
+      const token = cookies.split("=")[1];
+      localStorage.setItem("token", token);
+      setAuth({
+        isAuthenticated: true,
+        user: {
+          name: data.data[0].name,
+          email: data.data[0].email,
+          id: data.data[0].id,
+        },
+        token: token,
+      });
+      router.push("/");
     } catch (error: any) {
       setNotifications((prev) => {
         return {
