@@ -49,7 +49,12 @@ export async function signup(req: Request, res: Response) {
     delete payload["secretKey"];
     const token = genToken(payload);
 
-    res.cookie("token", token, { httpOnly: false });
+    res.cookie("token", token, {
+      httpOnly: true,
+      domain: ".atulmorchhlay.com",
+      sameSite: "lax",
+      secure: true,
+    });
 
     await prisma.user.update({
       where: {
