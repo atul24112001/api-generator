@@ -58,7 +58,7 @@ docker build -t atul24112001/$FRONTEND_IMAGE_NAME:$IMAGE_TAG .
 if [ $? -eq 0 ]; then
   echo "Docker image atul24112001/$FRONTEND_IMAGE_NAME:$IMAGE_TAG built successfully."
 else
-  echo "Docker image build failed."w
+  echo "Docker image build failed."
   exit 1
 fi
 docker run --name $FRONTEND_IMAGE_NAME-$FRONTEND_PORT -d -p $FRONTEND_PORT:3000 atul24112001/$FRONTEND_IMAGE_NAME:$IMAGE_TAG
