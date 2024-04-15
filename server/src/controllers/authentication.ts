@@ -50,10 +50,10 @@ export async function signup(req: Request, res: Response) {
     const token = genToken(payload);
 
     res.cookie("token", token, {
-      httpOnly: true,
+      // httpOnly: true,
       domain: ".atulmorchhlay.com",
       sameSite: "lax",
-      secure: true,
+      // secure: true,
     });
 
     await prisma.user.update({
@@ -107,10 +107,10 @@ export async function login(req: Request, res: Response) {
     const token = genToken(payload);
 
     res.cookie("token", token, {
-      httpOnly: true,
+      // httpOnly: true,
       domain: ".atulmorchhlay.com",
       sameSite: "lax",
-      secure: true,
+      // secure: true,
     });
 
     await prisma.user.update({
