@@ -37,3 +37,5 @@ APIGenerator
 
 # deploy.sh
 # */deployment.yaml
+
+*/.env
