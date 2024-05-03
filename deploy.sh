@@ -16,11 +16,13 @@ git stash
 git pull origin main
 
 cd ~/api-generator/server
+npm install
 npm run build
 pm2 delete api-generator-backend
 pm2 start npm --name "api-generator-backend" -- start
 
 cd ~/api-generator/frontend
+npm install
 npm run build
 pm2 delete api-generator-frontend
 pm2 start npm --name "api-generator-frontend" -- start
